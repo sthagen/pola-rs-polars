@@ -408,7 +408,10 @@ impl FileCacher {
                 let behind_cache = behind_cache || matches!(&lp, ALogicalPlan::Cache { .. });
 
                 lp.copy_inputs(scratch);
+                let mut count = 0;
                 while let Some(input) = scratch.pop() {
+                    count += 1;
+                    dbg!(count);
                     self.assign_unions(input, lp_arena, expr_arena, scratch, behind_cache)
                 }
                 lp_arena.replace(root, lp);
