@@ -229,6 +229,7 @@ impl FileCacher {
         if let Some(mut with_columns) = with_columns {
             // we cannot always find the predicates, because some have `SpecialEq` functions so for those
             // cases we may read the file twice and/or do an extra projection
+            dbg!(&finger_print.path);
             let do_projection = match self.file_count_and_column_union.get(finger_print) {
                 Some((_file_count, agg_columns)) => with_columns.len() < agg_columns.len(),
                 None => true,
