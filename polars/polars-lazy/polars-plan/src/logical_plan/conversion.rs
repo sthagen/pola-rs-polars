@@ -415,6 +415,10 @@ pub fn to_alp(
                 schema,
             }
         }
+        LogicalPlan::FileSink {input, payload} => {
+            let input = to_alp(*input, expr_arena, lp_arena)?;
+            ALogicalPlan::FileSink {input, payload: payload.clone() }
+        }
     };
     Ok(lp_arena.add(v))
 }
@@ -889,6 +893,13 @@ impl ALogicalPlan {
                     contexts,
                     schema,
                 }
+            }
+            ALogicalPlan::FileSink {
+                input,
+                payload
+            } => {
+                let input = Box::new(convert_to_lp(input, lp_arena));
+                LogicalPlan::FileSink {input, payload}
             }
         }
     }

@@ -1,3 +1,4 @@
+use std::path::PathBuf;
 use polars_core::prelude::*;
 use polars_io::csv::{CsvEncoding, NullValues};
 use polars_io::RowCount;
@@ -231,3 +232,17 @@ pub struct AnonymousScanOptions {
     pub predicate: Option<Expr>,
     pub fmt_str: &'static str,
 }
+
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+#[derive(Clone, Debug)]
+pub struct FileSinkOptions {
+    pub path: Arc<PathBuf>,
+    pub file_type: FileType
+}
+
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+#[derive(Clone, Copy, Debug)]
+pub enum FileType {
+    Parquet(ParquetOptions)
+}
+

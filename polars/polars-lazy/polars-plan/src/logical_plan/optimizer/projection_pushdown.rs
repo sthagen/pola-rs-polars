@@ -1195,7 +1195,7 @@ impl ProjectionPushDown {
                 }
             }
             // Slice and Unions have only inputs and exprs, so we can use same logic.
-            lp @ Slice { .. } | lp @ Union { .. } => {
+            lp @ Slice { .. } | lp @ Union { .. } | lp @ FileSink {..} => {
                 let inputs = lp.get_inputs();
                 let exprs = lp.get_exprs();
 

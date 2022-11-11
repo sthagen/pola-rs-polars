@@ -144,6 +144,10 @@ pub enum ALogicalPlan {
         contexts: Vec<Node>,
         schema: SchemaRef,
     },
+    FileSink {
+        input: Node,
+        payload: FileSinkOptions
+    }
 }
 
 impl Default for ALogicalPlan {
@@ -220,7 +224,7 @@ impl ALogicalPlan {
             Aggregate { schema, .. } => schema,
             Join { schema, .. } => schema,
             HStack { schema, .. } => schema,
-            Distinct { input, .. } => return arena.get(*input).schema(arena),
+            Distinct { input, .. } | FileSink {input, ..} => return arena.get(*input).schema(arena),
             Slice { input, .. } => return arena.get(*input).schema(arena),
             Melt { schema, .. } => schema,
             MapFunction { input, function } => {
@@ -452,6 +456,10 @@ impl ALogicalPlan {
                 contexts: inputs,
                 schema: schema.clone(),
             },
+            FileSink { payload, ..} => FileSink {
+                input: inputs.pop().unwrap(),
+                payload: payload.clone()
+            }
         }
     }
 
@@ -511,7 +519,7 @@ impl ALogicalPlan {
                     container.push(*node)
                 }
             }
-            ExtContext { .. } => {}
+            ExtContext { .. } | FileSink {..} => {}
         }
     }
 
@@ -558,6 +566,7 @@ impl ALogicalPlan {
             HStack { input, .. } => *input,
             Distinct { input, .. } => *input,
             MapFunction { input, .. } => *input,
+            FileSink {input, ..} => *input,
             ExtContext {
                 input, contexts, ..
             } => {

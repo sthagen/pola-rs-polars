@@ -3,6 +3,7 @@ mod joins;
 mod ordered;
 mod slice;
 mod utils;
+mod parquet_sink;
 
 pub(crate) use joins::*;
 pub(crate) use ordered::*;
